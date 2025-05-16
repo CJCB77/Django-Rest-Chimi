@@ -5,8 +5,9 @@ LABEL maintainer="https://johnny-coral-dev.vercel.app/"
 # This prevents Python from buffering stdout/stderr, ensuring logs appear immediately
 ENV PYTHONUNBUFFERED 1
 
-# Copy requirements file in a temp location
+# Copy requirements files in a temp location
 COPY ./requirements.txt /tmp/requirements.txt
+COPY ./requirements.txt /tmp/requirements.dev.txt
 # Copy application code in to the /app directory
 COPY ./app /app
 
@@ -15,15 +16,21 @@ WORKDIR /app
 # Container will listen on port 8000
 EXPOSE 8000
 
+
 # Run this commands in the terminal
 # Creates a python environment
 # Upgrades pip within that environment
 # Install all requirements from your requirements.txt file 
 # Cleans up the /tmp directory to reduce the image size
 # Creates a non-root user "django-user" with limited permissions for securit
+# Set a variable for dev environment as false(overwrited as true if we use the docker-compose file)
+ARG DEV=false
 RUN python -m venv /py && \
     /py/bin/pip install --upgrade pip && \
     /py/bin/pip install -r /tmp/requirements.txt && \
+    if [$DEV = "true"]; \
+        then /py/bin/pip install -r /tmp/requirements.dev.txt ; \
+    fi && \
     rm -rf /tmp && \
     adduser \
         --disabled-password \
