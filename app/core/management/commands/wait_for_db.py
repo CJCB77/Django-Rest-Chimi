@@ -7,6 +7,7 @@ import time
 from django.db.utils import OperationalError
 from psycopg2 import OperationalError as Psycopg2Error
 
+
 class Command(BaseCommand):
     """ Django Command to wait for database"""
     def handle(self, *args, **options):
@@ -20,5 +21,4 @@ class Command(BaseCommand):
             except (Psycopg2Error, OperationalError):
                 self.stdout.write('Database unavailable, waiting 1 second...')
                 time.sleep(1)
-            
         self.stdout.write(self.style.SUCCESS('Database available!'))

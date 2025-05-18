@@ -6,20 +6,22 @@ from django.core.management import call_command
 from django.db.utils import OperationalError
 from django.test import SimpleTestCase
 
+
 # Mock the check method of the Command
 @patch('core.management.commands.wait_for_db.Command.check')
 class CommandTests(SimpleTestCase):
     """Test Commands"""
-    
     def test_wait_for_db_ready(self, patched_check):
         """Test Database Ready Immediately"""
-        patched_check.return_value = True # Simulates the database being ready by mocking
-        
-        call_command('wait_for_db') # Runs management command
-        # Verify that the check method was called exactly once, with the correct parameters
+        # Simulates the database being ready by mocking
+        patched_check.return_value = True
+
+        call_command('wait_for_db')  # Runs management command
+        # Verify that the check method was called exactly once,
+        # with the correct parameters
         patched_check.assert_called_once_with(databases=['default'])
-        
-    # Patch the sleep function to return nothing and avoid waiting    
+
+    # Patch the sleep function to return nothing and avoid waiting
     @patch('time.sleep')
     def test_wait_for_db_delay(self, patched_sleep, patched_check):
         """Test waiting for database when getting OperationalError"""
@@ -28,7 +30,8 @@ class CommandTests(SimpleTestCase):
         # 6th call will return True
         patched_check.side_effect = [Psycopg2Error] * 2 + \
             [OperationalError] * 3 + [True]
-        
+
         call_command('wait_for_db')
-        self.assertEqual(patched_check.call_count, 6) # Verify that the check method was called 6 times
+        # Verify that the check method was called 6 times
+        self.assertEqual(patched_check.call_count, 6)
         patched_check.assert_called_with(databases=['default'])
