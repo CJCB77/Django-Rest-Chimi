@@ -31,7 +31,6 @@ class UserAdmin(BaseUserAdmin):
                     'last_login',
                 )
             }
-            
         )
     )
     readonly_fields = ['last_login']
@@ -51,5 +50,6 @@ class UserAdmin(BaseUserAdmin):
             }
         ),
     )
+
 
 admin.site.register(models.User, UserAdmin)
