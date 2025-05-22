@@ -55,7 +55,7 @@ class ModelTests(TestCase):
             email='test@example.com',
             password="pass12345"
         )    
-        recipe = models.Recipe.objects.create_recipe(
+        recipe = models.Recipe.objects.create(
             user=user,
             title='Sample recipe name',
             time_minutes=5,
