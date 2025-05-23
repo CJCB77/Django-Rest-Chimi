@@ -8,6 +8,7 @@ from django.contrib.auth import get_user_model
 
 from core import models
 
+
 class ModelTests(TestCase):
     """Test models"""
 
@@ -54,7 +55,7 @@ class ModelTests(TestCase):
         user = get_user_model().objects.create_user(
             email='test@example.com',
             password="pass12345"
-        )    
+        )
         recipe = models.Recipe.objects.create(
             user=user,
             title='Sample recipe name',
