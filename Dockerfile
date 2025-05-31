@@ -8,6 +8,7 @@ ENV PYTHONUNBUFFERED 1
 # Copy requirements files in a temp location
 COPY ./requirements.txt /tmp/requirements.txt
 COPY ./requirements.dev.txt /tmp/requirements.dev.txt
+COPY ./scripts /scripts
 # Copy application code in to the /app directory
 COPY ./app /app
 
@@ -30,7 +31,7 @@ RUN python -m venv /py && \
     # Install dependencies for pyscopg2 BEFORE installing requirements
     apk add --update --no-cache postgresql-client jpeg-dev && \
     apk add --update --no-cache --virtual .temp-build-deps \
-        build-base postgresql-dev musl-dev zlib zlib-dev && \
+        build-base postgresql-dev musl-dev zlib zlib-dev linux-headers && \
     /py/bin/pip install -r /tmp/requirements.txt && \
     if [ $DEV = "true" ]; \
         then /py/bin/pip install -r /tmp/requirements.dev.txt ; \
@@ -44,11 +45,14 @@ RUN python -m venv /py && \
     mkdir -p /vol/web/media && \
     mkdir -p /vol/web/static && \
     chown -R django-user:django-user /vol && \
-    chmod -R 755 /vol
+    chmod -R 755 /vol && \
+    chmod -R +x /scripts
     
 
 # Adds the Python virtual environment's bin directory to the PATH        
-ENV PATH="/py/bin:$PATH"
+ENV PATH="/scripts:/py/bin:$PATH"
 
 # Switches from root to the limited-privilege django-user
 USER django-user
+
+CMD ["run.sh"]
